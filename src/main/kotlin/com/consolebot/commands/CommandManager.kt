@@ -15,7 +15,7 @@ class CommandManager : ListenerAdapter() {
     var commandMap: HashMap<String, BaseApplication> = HashMap()
 
     fun registerCommand(cmd: BaseApplication){
-        var actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
+        val actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
         commandMap.put(actualCommand, cmd)
         println("'$actualCommand' was registered")
     }
