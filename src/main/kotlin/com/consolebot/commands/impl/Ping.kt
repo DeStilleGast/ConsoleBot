@@ -10,8 +10,8 @@ class Ping : BaseApplication("ping") {
 
     override fun execute(context: Context) {
         val currentTime = System.currentTimeMillis()
-        val pingMessage = context.reply(":ping_pong: pinging...")
+        val pingMessage = context.reply("\uD83C\uDFD3 pinging...")
         val took = System.currentTimeMillis() - currentTime
-        pingMessage.editMessage(":ping_pong: is around ${took}MS while the api has ${context.getBot().ping}MS").complete()
+        pingMessage.editMessage("\uD83C\uDFD3 is around ${took}MS while the api has ${context.getBot().ping}MS").complete()
     }
 }
