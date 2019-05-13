@@ -11,15 +11,15 @@ import net.dv8tion.jda.core.entities.User
 class Context(val channel: TextChannel, val user: User, val message: Message, val arguments: List<String>) {
     // TODO: change user to DBUser
 
-    fun isUser(): Boolean{
+    fun isUser(): Boolean {
         return !user.isBot || !user.isFake
     }
 
-    fun getText(): String{
+    fun getText(): String {
         return message.contentRaw
     }
 
-    fun reply(msg: Any): Message{
+    fun reply(msg: Any): Message {
         return channel.sendMessage(msg.toString()).complete()
 
         // TODO: add fallback (send DM)
@@ -28,5 +28,4 @@ class Context(val channel: TextChannel, val user: User, val message: Message, va
     fun getBot(): JDA {
         return channel.jda
     }
-
 }
