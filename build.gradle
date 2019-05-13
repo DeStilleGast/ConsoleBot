@@ -13,11 +13,13 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8" //Kotlin
 
+    // https://github.com/DV8FromTheWorld/JDA
     compile 'net.dv8tion:JDA:3.8.3_463' // JDA
 
 //    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.2'  // Logging
 //    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2' // Logging
 
+    // https://github.com/aschoerk/reflections8
     compile 'net.oneandone.reflections8:reflections8:0.11.4' // Reflection8 (command registration)
 }
 
