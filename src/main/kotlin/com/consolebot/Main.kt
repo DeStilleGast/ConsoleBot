@@ -43,8 +43,8 @@ class Main(botSettings: Settings) : EventListener {
 
     init {
         Database.connect(
-            "jdbc:postgresql://${botSettings.DBHost}:${botSettings.DBPort}/${botSettings.DBSchema}",
-            "com.mysql.jdbc.Driver",
+            "jdbc:mysql://${botSettings.DBHost}:${botSettings.DBPort}/${botSettings.DBSchema}",
+            "com.mysql.cj.jdbc.Driver",
             botSettings.DBUsername,
             botSettings.DBPassword
         )
@@ -56,8 +56,8 @@ class Main(botSettings: Settings) : EventListener {
 
         findAndRegisterCommands()
         build(0,
-            botSettings.ShardTotal.toInt() - 1,
-            botSettings.ShardTotal.toInt(), botSettings.bottoken)
+            botSettings.ShardTotal - 1,
+            botSettings.ShardTotal, botSettings.bottoken)
     }
 
     fun build(token: String){
@@ -73,9 +73,10 @@ class Main(botSettings: Settings) : EventListener {
     }
 
     fun build(firstShard: Int, lastShard: Int, total: Int, token: String){
+        val mainInstance = this
         shardManager = DefaultShardManagerBuilder().apply {
             setToken(token)
-            addEventListeners(this)
+            addEventListeners(mainInstance)
             addEventListeners(commandManager)
             setAutoReconnect(true)
             setAudioEnabled(false)
