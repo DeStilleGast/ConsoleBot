@@ -28,7 +28,9 @@ dependencies {
 
     compile "org.jetbrains.exposed:exposed:0.9.1" // add exposed
 
-    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.2.1' // kotlinx 
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.2.1' // kotlinx
+
+    compile 'io.github.microutils:kotlin-logging:1.6.24'
 
 
 
