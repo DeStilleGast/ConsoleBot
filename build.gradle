@@ -22,6 +22,8 @@ dependencies {
 
     // https://github.com/cbeust/klaxon
     compile 'com.beust:klaxon:5.0.1' // Read and write settings
+
+    compile 'mysql:mysql-connector-java:8.0.16' // connect to the database
 }
 
 compileKotlin {
