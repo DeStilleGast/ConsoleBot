@@ -1,5 +1,6 @@
 package com.consolebot.commands
 
+import com.consolebot.database.DatabaseWrapper
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.*
@@ -45,6 +46,17 @@ class CommandManager : ListenerAdapter() {
                 if (commandMap.containsKey(filename)) { // check if application/command exist, if yes, run command
                     commandMap[filename]!!.execute(Context(event.textChannel, event.author, event.message, arguments))
                 }
+            }
+        }
+
+        if(event.guild != null){
+            DatabaseWrapper.getGuildSafe(event.guild).thenAccept { stored
+             ->
+                if (event.author.isBot){
+                    return@thenAccept
+
+                }
+
             }
         }
     }
