@@ -8,6 +8,7 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     jcenter()
+    maven { url "https://dl.bintray.com/kotlin/exposed" } // Add exposed for async
 }
 
 dependencies {
@@ -24,6 +25,13 @@ dependencies {
     compile 'com.beust:klaxon:5.0.1' // Read and write settings
 
     compile 'mysql:mysql-connector-java:8.0.16' // connect to the database
+
+    compile "org.jetbrains.exposed:exposed:0.9.1" // add exposed
+
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.2.1' // kotlinx 
+
+
+
 }
 
 compileKotlin {
