@@ -13,7 +13,7 @@ class SettingsLoader {
 
         // Check if file exists, if not create fresh new config
         if (!settingsFile.exists()) {
-            val defaultJson = Klaxon().toJsonString(Settings(""))
+            val defaultJson = Klaxon().toJsonString(Settings("", "", "", "", "", ""))
             val writer = settingsFile.printWriter()
             writer.use { it.print(defaultJson) }
             writer.close()
