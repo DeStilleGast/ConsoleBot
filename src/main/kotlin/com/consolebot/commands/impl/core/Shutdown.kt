@@ -24,10 +24,4 @@ class Shutdown : BaseApplication("shutdown") {
     override fun getPath(): String{
         return KnownPaths.SYSTEM.path
     }
-//
-//    override fun extraValidationChecks(context: Context) {
-//        if(context.user.idLong !in GlobalVariables.ConsoleOwners){
-//            throw NotOwnerException()
-//        }
-//    }
 }

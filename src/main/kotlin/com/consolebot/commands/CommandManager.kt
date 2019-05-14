@@ -1,9 +1,11 @@
 package com.consolebot.commands
 
+import com.consolebot.commands.exceptions.ValidationResult
 import com.consolebot.database.DatabaseWrapper
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.*
+import kotlin.streams.toList
 
 
 /**
@@ -74,10 +76,10 @@ class CommandManager : ListenerAdapter() {
                     arguments
                 )
 
-                val errors = app.extraValidationChecks(context)
+                val errors = app.runValidationCheck(context)
 
                 if(errors.isNotEmpty()){
-                   context.reply("There were some errors while attemping to start this application:\n- " + errors.joinToString("\n- "))
+                   context.reply("There were some errors while attemping to start this application:\n- " + errors.stream().map(ValidationResult::reason).toList().joinToString("\n- "))
                 }else {
                     app.execute(context)
                 }

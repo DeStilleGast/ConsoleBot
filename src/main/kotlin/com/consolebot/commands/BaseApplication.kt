@@ -2,6 +2,7 @@ package com.consolebot.commands
 
 import com.consolebot.commands.exceptions.BotPermissionValidator
 import com.consolebot.commands.exceptions.UserPermissionValidator
+import com.consolebot.commands.exceptions.Validation
 import com.consolebot.commands.exceptions.ValidationResult
 import net.dv8tion.jda.core.Permission
 import java.util.*
@@ -16,7 +17,7 @@ import kotlin.collections.ArrayList
  */
 abstract class BaseApplication(var filename: String) {
 
-    private val permissionRequirements: MutableList<ValidationResult> = ArrayList()
+    private val permissionRequirements: MutableList<Validation> = ArrayList()
 
     init {
         permissionRequirements.add(BotPermissionValidator(this))
@@ -50,12 +51,12 @@ abstract class BaseApplication(var filename: String) {
      * @param context The context from the message (get user, channel and getGuild)
      * Use this function to apply extra validations, throw Exception when the command isn't allowed to run
      */
-    fun extraValidationChecks(context: Context): List<String> {
-        val errors: MutableList<String> = ArrayList()
+    fun runValidationCheck(context: Context): List<ValidationResult> {
+        val errors: MutableList<ValidationResult> = ArrayList()
 
         permissionRequirements.forEach {
             val result = it.validate(context)
-            if (result.isNotEmpty()) {
+            if (!result.hasPassed) {
                 errors.add(result)
             }
         }
@@ -63,7 +64,7 @@ abstract class BaseApplication(var filename: String) {
         return errors
     }
 
-    protected fun registerValidation(validator: ValidationResult) {
+    protected fun registerValidation(validator: Validation) {
         permissionRequirements.add(validator)
     }
 }
