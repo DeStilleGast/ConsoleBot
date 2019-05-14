@@ -17,21 +17,21 @@ abstract class BaseApplication(var filename: String) {
     /**
      * Return path for "application"
      */
-    fun getPath(): String{
+    open fun getPath(): String{
         return KnownPaths.ROOT.path
     }
 
     /**
      * @return list of permissions that the bot requires to run this command
      */
-    fun requireBotPermission() : List<Permission>{
+    open fun requireBotPermission() : List<Permission>{
         return Collections.emptyList()
     }
 
     /**
      * @return list of permissions that the user requires to run this command
      */
-    fun requireUserPermission() : List<Permission>{
+    open fun requireUserPermission() : List<Permission>{
         return Collections.emptyList()
     }
 }
