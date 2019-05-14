@@ -12,4 +12,6 @@ fun main() {
     }
 
     Main(settings)
+
+    // -Dorg.slf4j.simpleLogger.defaultLogLevel=debug
 }

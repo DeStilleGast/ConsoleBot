@@ -66,14 +66,21 @@ class CommandManager : ListenerAdapter() {
                     Arrays.asList("")
 
             if (commandMap.containsKey(filename)) { // check if application/command exist, if yes, run command
-                commandMap[filename]!!.execute(
-                    Context(
-                        event.textChannel,
-                        event.author,
-                        event.message,
-                        arguments
-                    )
+                val app = commandMap[filename]!!
+                val context = Context(
+                    event.channel,
+                    event.author,
+                    event.message,
+                    arguments
                 )
+
+                val errors = app.extraValidationChecks(context)
+
+                if(errors.isNotEmpty()){
+                   context.reply("There were some errors while attemping to start this application:\n- " + errors.joinToString("\n- "))
+                }else {
+                    app.execute(context)
+                }
             }
         }
     }

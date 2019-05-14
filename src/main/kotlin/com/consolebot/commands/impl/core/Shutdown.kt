@@ -3,14 +3,20 @@ package com.consolebot.commands.impl.core
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
 import com.consolebot.commands.KnownPaths
+import com.consolebot.commands.exceptions.OwnerValidator
 
 /**
  * Created by DeStilleGast 14-5-2019
  */
 class Shutdown : BaseApplication("shutdown") {
+
+    init {
+        registerValidation(OwnerValidator())
+    }
+
     override fun execute(context: Context) {
         context.getBot().shutdown()
-    }
+     }
 
     /**
      * Return path for "application"
@@ -18,6 +24,10 @@ class Shutdown : BaseApplication("shutdown") {
     override fun getPath(): String{
         return KnownPaths.SYSTEM.path
     }
-
-
+//
+//    override fun extraValidationChecks(context: Context) {
+//        if(context.user.idLong !in GlobalVariables.ConsoleOwners){
+//            throw NotOwnerException()
+//        }
+//    }
 }
