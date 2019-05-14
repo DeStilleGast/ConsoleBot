@@ -14,6 +14,7 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.events.Event
 import net.dv8tion.jda.core.events.ReadyEvent
+import net.dv8tion.jda.core.events.ShutdownEvent
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.core.hooks.EventListener
@@ -108,6 +109,8 @@ class Main(botSettings: Settings) : EventListener {
             LOGGER.info("Joined ${event.guild.name}") // quick logging
         }else if(event is GuildLeaveEvent){
             LOGGER.info("Left ${event.guild.name}") // quick logging
+        }else if(event is ShutdownEvent){
+            System.exit(0)
         }
     }
 
