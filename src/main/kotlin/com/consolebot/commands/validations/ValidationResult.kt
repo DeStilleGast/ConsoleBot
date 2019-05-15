@@ -1,4 +1,4 @@
-package com.consolebot.commands.exceptions
+package com.consolebot.commands.validations
 
 /**
  * Created by DeStilleGast 14-5-2019

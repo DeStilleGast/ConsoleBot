@@ -2,7 +2,7 @@ package com.consolebot.commands.impl
 
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
-import com.consolebot.commands.exceptions.NSFWValidation
+import com.consolebot.commands.validations.NSFWValidation
 import net.dv8tion.jda.core.Permission
 import java.util.*
 

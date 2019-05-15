@@ -1,6 +1,6 @@
 package com.consolebot.commands
 
-import com.consolebot.commands.exceptions.ValidationResult
+import com.consolebot.commands.validations.ValidationResult
 import com.consolebot.database.DatabaseWrapper
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter

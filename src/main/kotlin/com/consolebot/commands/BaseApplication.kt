@@ -1,9 +1,9 @@
 package com.consolebot.commands
 
-import com.consolebot.commands.exceptions.BotPermissionValidator
-import com.consolebot.commands.exceptions.UserPermissionValidator
-import com.consolebot.commands.exceptions.Validation
-import com.consolebot.commands.exceptions.ValidationResult
+import com.consolebot.commands.validations.BotPermissionValidator
+import com.consolebot.commands.validations.UserPermissionValidator
+import com.consolebot.commands.validations.Validation
+import com.consolebot.commands.validations.ValidationResult
 import net.dv8tion.jda.core.Permission
 import java.util.*
 import kotlin.collections.ArrayList

@@ -3,7 +3,7 @@ package com.consolebot.commands.impl.core
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
 import com.consolebot.commands.KnownPaths
-import com.consolebot.commands.exceptions.OwnerValidator
+import com.consolebot.commands.validations.OwnerValidator
 
 /**
  * Created by DeStilleGast 14-5-2019
