@@ -8,6 +8,6 @@ import com.consolebot.commands.Context
  */
 class OwnerValidator : Validation {
     override fun validate(context: Context): ValidationResult {
-        return ValidationResult(context.user.idLong !in GlobalVariables.ConsoleOwners, "Access denied (code: 5)")
+        return ValidationResult(context.user.idLong in GlobalVariables.ConsoleOwners, "Access denied (code: 5)")
     }
 }
