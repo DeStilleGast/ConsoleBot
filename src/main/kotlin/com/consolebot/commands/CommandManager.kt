@@ -79,7 +79,7 @@ class CommandManager : ListenerAdapter() {
                 val errors = app.runValidationCheck(context)
 
                 if(errors.isNotEmpty()){
-                   context.reply("There were some errors while attemping to start this application:\n- " + errors.stream().map(ValidationResult::reason).toList().joinToString("\n- "))
+                   context.reply("There were some errors while attempting to start this application:\n- " + errors.stream().map(ValidationResult::reason).toList().joinToString("\n- "))
                 }else {
                     app.execute(context)
                 }

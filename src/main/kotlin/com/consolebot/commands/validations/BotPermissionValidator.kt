@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.entities.Guild
 /**
  * Created by DeStilleGast 14-5-2019
  */
-class BotPermissionValidator(val app: BaseApplication) : Validation {
+class BotPermissionValidator(private val app: BaseApplication) : Validation {
 
     override fun validate(context: Context): ValidationResult {
         val missingPermissions: MutableList<Permission> = ArrayList()
