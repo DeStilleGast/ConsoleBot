@@ -5,6 +5,8 @@ import com.consolebot.database.DatabaseWrapper
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.*
+import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 import kotlin.streams.toList
 
 
@@ -61,11 +63,11 @@ class CommandManager : ListenerAdapter() {
                 commandLine.contains(" ")                                             // check if the commandline has a space
             val filename =
                 if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
-            val arguments: List<String> =
-                if (hasSpaceInMessage)
-                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
-                else
-                    Arrays.asList("")
+//            val arguments: List<String> =
+//                if (hasSpaceInMessage)
+//                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
+//                else
+//                    Arrays.asList("")
 
             if (commandMap.containsKey(filename)) { // check if application/command exist, if yes, run command
                 val app = commandMap[filename]!!
@@ -73,7 +75,7 @@ class CommandManager : ListenerAdapter() {
                     event.channel,
                     event.author,
                     event.message,
-                    arguments
+                    parseArguments(commandLine.substring(commandLine.indexOf(' ') + 1))
                 )
 
                 val errors = app.runValidationCheck(context)
@@ -85,5 +87,19 @@ class CommandManager : ListenerAdapter() {
                 }
             }
         }
+    }
+
+    // https://stackoverflow.com/questions/10695143/split-a-quoted-string-with-a-delimiter
+    private fun parseArguments(command: String): List<String> {
+        val p = Pattern.compile("((?<=(\"))[\\w ]*(?=(\"(\\s|$))))|((?<!\")\\w+(?!\"))")
+        val m = p.matcher(command)
+
+        var toReturn: MutableList<String> = ArrayList()
+
+        while(m.find()){
+            toReturn.add(m.group())
+        }
+
+        return toReturn
     }
 }
