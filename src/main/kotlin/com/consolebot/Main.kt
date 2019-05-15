@@ -4,7 +4,9 @@ import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.CommandManager
 import com.consolebot.database.DatabaseWrapper
 import com.consolebot.database.schema.Guilds
+import com.consolebot.database.schema.Users
 import com.consolebot.extensions.asyncTransaction
+import com.consolebot.processlist.ActiveApplications
 import com.consolebot.settings.Settings
 import mu.KotlinLogging
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder
@@ -61,7 +63,8 @@ class Main(botSettings: Settings) : EventListener {
         )
         asyncTransaction(pool){
             SchemaUtils.create(
-                Guilds
+                Guilds,
+                Users
             )
         }.execute()
 
@@ -71,7 +74,6 @@ class Main(botSettings: Settings) : EventListener {
             botSettings.ShardTotal - 1,
             botSettings.ShardTotal, botSettings.bottoken)
 
-        Main.LOGGER.error("TEST")
     }
 
     fun build(token: String){
@@ -112,6 +114,8 @@ class Main(botSettings: Settings) : EventListener {
         }else if(event is ShutdownEvent){
             System.exit(0)
         }
+
+        ActiveApplications.onEvent(event)
     }
 
     /**

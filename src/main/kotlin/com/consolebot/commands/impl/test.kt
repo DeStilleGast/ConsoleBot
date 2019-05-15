@@ -2,9 +2,8 @@ package com.consolebot.commands.impl
 
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
-import com.consolebot.commands.validations.NSFWValidation
-import net.dv8tion.jda.core.Permission
-import java.util.*
+import com.consolebot.processlist.ActiveApplications
+import com.consolebot.processlist.TestProcess
 
 /**
  * Created by DeStilleGast 14-5-2019
@@ -12,14 +11,13 @@ import java.util.*
 class test : BaseApplication("test") {
 
     init {
-        registerValidation(NSFWValidation())
     }
 
     override fun execute(context: Context) {
-        context.reply("Test completed")
+        ActiveApplications.keepRunning(TestProcess(context))
+        context.reply("Application started")
+
+        context.getDBUserAsync{ context.reply(it.terminalStyle) }
     }
 
-    override fun requireBotPermission(): List<Permission> {
-        return Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE)
-    }
 }
