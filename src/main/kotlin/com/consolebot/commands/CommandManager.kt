@@ -1,5 +1,6 @@
 package com.consolebot.commands
 
+import com.consolebot.Main
 import com.consolebot.commands.validations.ValidationResult
 import com.consolebot.database.DatabaseWrapper
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
@@ -14,14 +15,14 @@ import kotlin.streams.toList
  * Created by DeStilleGast 12-5-2019
  */
 
-class CommandManager : ListenerAdapter() {
+object CommandManager : ListenerAdapter() {
 
-    var commandMap: HashMap<String, BaseApplication> = HashMap()
+    private val commandMap: HashMap<String, BaseApplication> = HashMap()
 
     fun registerCommand(cmd: BaseApplication) {
         val actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
         commandMap.put(actualCommand, cmd)
-        println("'$actualCommand' was registered")
+        Main.LOGGER.info("'$actualCommand' was registered")
     }
 
     private fun combinePathAndFile(path: String, file: String): String {
@@ -94,7 +95,7 @@ class CommandManager : ListenerAdapter() {
         val p = Pattern.compile("((?<=(\"))[\\w ]*(?=(\"(\\s|$))))|((?<!\")\\w+(?!\"))")
         val m = p.matcher(command)
 
-        var toReturn: MutableList<String> = ArrayList()
+        val toReturn: MutableList<String> = ArrayList()
 
         while(m.find()){
             toReturn.add(m.group())
