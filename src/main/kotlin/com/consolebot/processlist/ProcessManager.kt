@@ -7,21 +7,21 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * Created by DeStilleGast 15-5-2019
  */
-object ActiveApplications : EventListener{
+object ProcessManager : EventListener{
     // prevent concurency exceptions
-    private val runningApplications: MutableList<ActiveApplication> = CopyOnWriteArrayList()
+    private val runningApplications: MutableList<ActiveProcess> = CopyOnWriteArrayList()
     private var isRunning: Boolean = false
 
-    fun keepRunning(app: ActiveApplication){
-        runningApplications.add(app)
+    fun keepRunning(process: ActiveProcess){
+        runningApplications.add(process)
     }
 
-    fun closeApplication(app: ActiveApplication){
-        runningApplications.remove(app)
+    fun closeApplication(process: ActiveProcess){
+        runningApplications.remove(process)
     }
 
     override fun onEvent(event: Event?) {
-        if(isRunning) return
+        if(isRunning) return // just to be sure
 
         isRunning = true
         runningApplications.forEach { it.onEvent(event) }

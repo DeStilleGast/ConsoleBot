@@ -6,6 +6,7 @@ import com.consolebot.database.DatabaseWrapper
 import com.consolebot.database.schema.Guilds
 import com.consolebot.database.schema.Users
 import com.consolebot.extensions.asyncTransaction
+import com.consolebot.processlist.ProcessManager
 import com.consolebot.settings.Settings
 import mu.KotlinLogging
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder
@@ -107,6 +108,8 @@ class Main(botSettings: Settings) : EventListener {
         } else if (event is ShutdownEvent) {
             System.exit(0)
         }
+
+        ProcessManager.onEvent(event)
     }
 
     /**
