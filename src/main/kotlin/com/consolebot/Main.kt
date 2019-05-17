@@ -6,14 +6,11 @@ import com.consolebot.database.DatabaseWrapper
 import com.consolebot.database.schema.Guilds
 import com.consolebot.database.schema.Users
 import com.consolebot.extensions.asyncTransaction
-import com.consolebot.processlist.ActiveApplications
 import com.consolebot.settings.Settings
 import mu.KotlinLogging
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.AccountType
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.JDABuilder
+import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.events.Event
 import net.dv8tion.jda.core.events.ReadyEvent
 import net.dv8tion.jda.core.events.ShutdownEvent
@@ -26,6 +23,7 @@ import org.reflections8.Reflections
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
 class Main(botSettings: Settings) : EventListener {
 
@@ -41,12 +39,16 @@ class Main(botSettings: Settings) : EventListener {
             }
         }
 
-        var jda: JDA? = null
+        val scheduledPool: ScheduledExecutorService by lazy {
+            Executors.newScheduledThreadPool(100) {
+                Thread(it, "Console-Bot-Scheduled-Pool-Thread").apply {
+                    isDaemon = true
+                }
+            }
+        }
 
-        lateinit var shardManager: ShardManager
+        private lateinit var shardManager: ShardManager
     }
-
-    private val commandManager: CommandManager = CommandManager()
 
     init {
         println("LOGGER.isErrorEnabled = ${LOGGER.isErrorEnabled}")
@@ -61,39 +63,28 @@ class Main(botSettings: Settings) : EventListener {
             botSettings.DBUsername,
             botSettings.DBPassword
         )
-        asyncTransaction(pool){
+        asyncTransaction(pool) {
             SchemaUtils.create(
                 Guilds,
                 Users
             )
         }.execute()
 
-
         findAndRegisterCommands()
-        build(0,
+        build(
+            0,
             botSettings.ShardTotal - 1,
-            botSettings.ShardTotal, botSettings.bottoken)
-
+            botSettings.ShardTotal,
+            botSettings.bottoken
+        )
     }
 
-    fun build(token: String){
-        jda = JDABuilder(AccountType.BOT)
-            .setToken(token)
-            .setAudioEnabled(false)
-            .setAutoReconnect(true)
-            .addEventListener(this)
-            .addEventListener(commandManager)
-            .build()
-
-        Main.jda = jda
-    }
-
-    fun build(firstShard: Int, lastShard: Int, total: Int, token: String){
+    private fun build(firstShard: Int, lastShard: Int, total: Int, token: String) {
         val mainInstance = this
         shardManager = DefaultShardManagerBuilder().apply {
             setToken(token)
             addEventListeners(mainInstance)
-            addEventListeners(commandManager)
+            addEventListeners(CommandManager)
             setAutoReconnect(true)
             setAudioEnabled(false)
             setBulkDeleteSplittingEnabled(false)
@@ -104,18 +95,18 @@ class Main(botSettings: Settings) : EventListener {
 
     override fun onEvent(event: Event?) {
         if (event is ReadyEvent) {
-            println("Bot is ready !")
-            println("Bot is in ${event.guildTotalCount} guilds with ${event.guildAvailableCount} available")
-        }else if(event is GuildJoinEvent){
+            println("Bot [${event.jda.shardInfo.shardId}] is ready !")
+            println("Bot [${event.jda.shardInfo.shardId}] is in ${event.guildTotalCount} guilds with ${event.guildAvailableCount} available")
+
+            event.jda.presence.setPresence(Game.playing("MOM, GRAB THE CAMERA!"), false)
+        } else if (event is GuildJoinEvent) {
             DatabaseWrapper.newGuild(event.guild)
             LOGGER.info("Joined ${event.guild.name}") // quick logging
-        }else if(event is GuildLeaveEvent){
+        } else if (event is GuildLeaveEvent) {
             LOGGER.info("Left ${event.guild.name}") // quick logging
-        }else if(event is ShutdownEvent){
+        } else if (event is ShutdownEvent) {
             System.exit(0)
         }
-
-        ActiveApplications.onEvent(event)
     }
 
     /**
@@ -127,8 +118,7 @@ class Main(botSettings: Settings) : EventListener {
         val subTypes = reflections.getSubTypesOf(BaseApplication::class.java)
 
         subTypes.forEach {
-            commandManager.registerCommand(it.newInstance())
+            CommandManager.registerCommand(it.newInstance())
         }
     }
-
 }

@@ -6,6 +6,7 @@ import com.consolebot.extensions.asyncTransaction
 import net.dv8tion.jda.core.entities.User
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by DeStilleGast 15-5-2019
@@ -22,7 +23,7 @@ object DatabaseUserWrapper{
 
     fun getUser(user: User) = getUser(user.idLong)
 
-    fun getUser(userId: Long) = asyncTransaction<DBUser>(pool){
+    fun getUser(userId: Long): CompletableFuture<DBUser> = asyncTransaction(pool){
         val user = Users.select{ Users.userId.eq(userId)}.firstOrNull()
 
         if(user == null){
