@@ -21,7 +21,7 @@ class Shutdown : BaseApplication("shutdown") {
     /**
      * Return path for "application"
      */
-    override fun getPath(): String{
-        return KnownPaths.SYSTEM.path
+    override fun getPath(): KnownPaths{
+        return KnownPaths.SYSTEM
     }
 }

@@ -2,6 +2,7 @@ package com.consolebot.commands.impl
 
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
+import com.consolebot.commands.KnownPaths
 import com.consolebot.processlist.ActiveProcess
 import com.consolebot.processlist.ProcessManager
 import net.dv8tion.jda.core.events.Event
@@ -46,4 +47,7 @@ class test : BaseApplication("test") {
 //        context.getDBUserAsync{ context.reply(it.terminalStyle) }
     }
 
+    override fun getPath(): KnownPaths {
+        return KnownPaths.ROOT
+    }
 }

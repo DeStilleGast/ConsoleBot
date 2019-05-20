@@ -10,7 +10,8 @@ enum class KnownPaths {
     SYSTEM("/core"),
     GUILD("/guild"),
     FUN("/fun"),
-    AUDIO("/music");
+    AUDIO("/music"),
+    USER("/user/<userid>");
 
     var path: String
 

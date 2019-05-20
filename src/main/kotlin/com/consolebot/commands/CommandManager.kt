@@ -1,6 +1,7 @@
 package com.consolebot.commands
 
 import com.consolebot.Main
+import com.consolebot.Tuple
 import com.consolebot.commands.validations.ValidationResult
 import com.consolebot.database.DatabaseWrapper
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
@@ -17,12 +18,12 @@ import kotlin.streams.toList
 
 object CommandManager : ListenerAdapter() {
 
-    private val commandMap: HashMap<String, BaseApplication> = HashMap()
+    private val commandMap: MutableList<Tuple<String, BaseApplication>> = ArrayList()
 
     fun registerCommand(cmd: BaseApplication) {
-        val actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
-        commandMap.put(actualCommand, cmd)
-        Main.LOGGER.info("'$actualCommand' was registered")
+        val actualCommand = combinePathAndFile(cmd.getPath().path, cmd.filename)
+        commandMap.add(Tuple(actualCommand, cmd))
+        Main.LOGGER.info("Command '$actualCommand' was registered")
     }
 
     private fun combinePathAndFile(path: String, file: String): String {
@@ -62,16 +63,15 @@ object CommandManager : ListenerAdapter() {
 
             val hasSpaceInMessage =
                 commandLine.contains(" ")                                             // check if the commandline has a space
-            val filename =
-                if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
+            val filename = if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
 //            val arguments: List<String> =
 //                if (hasSpaceInMessage)
 //                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
 //                else
 //                    Arrays.asList("")
 
-            if (commandMap.containsKey(filename)) { // check if application/command exist, if yes, run command
-                val app = commandMap[filename]!!
+            if (commandMap.map { it.partA }.contains(filename)) { // check if application/command exist, if yes, run command
+                val app = commandMap.first { it.partA == filename }.partB
                 val context = Context(
                     event.channel,
                     event.author,

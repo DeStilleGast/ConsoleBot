@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
 /**
  * @param filename Set filename for command WITHOUT EXTENSION
  */
-abstract class BaseApplication(var filename: String) {
+abstract class BaseApplication(var filename: String){
 
     private val permissionRequirements: MutableList<Validation> = ArrayList()
 
@@ -29,9 +29,9 @@ abstract class BaseApplication(var filename: String) {
     /**
      * Return path for "application"
      */
-    open fun getPath(): String {
+    abstract fun getPath(): KnownPaths/*{
         return KnownPaths.ROOT.path
-    }
+    }*/
 
     /**
      * @return list of permissions that the bot requires to run this command

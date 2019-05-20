@@ -72,6 +72,7 @@ class Main(botSettings: Settings) : EventListener {
         }.execute()
 
         findAndRegisterCommands()
+
         build(
             0,
             botSettings.ShardTotal - 1,

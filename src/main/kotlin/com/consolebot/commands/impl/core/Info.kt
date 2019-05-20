@@ -15,7 +15,7 @@ class Info : BaseApplication("info") {
                 "Shard id: ${context.getBot().shardInfo.shardId}")
     }
 
-    override fun getPath(): String {
-        return KnownPaths.SYSTEM.path
+    override fun getPath(): KnownPaths {
+        return KnownPaths.SYSTEM
     }
 }
