@@ -63,7 +63,8 @@ object CommandManager : ListenerAdapter() {
 
             val hasSpaceInMessage =
                 commandLine.contains(" ")                                             // check if the commandline has a space
-            var filename = if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
+            var filename =
+                if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
 //            val arguments: List<String> =
 //                if (hasSpaceInMessage)
 //                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
@@ -85,9 +86,13 @@ object CommandManager : ListenerAdapter() {
 
                 val errors = app.runValidationCheck(context)
 
-                if(errors.isNotEmpty()){
-                   context.reply("There were some errors while attempting to start this application:\n- " + errors.stream().map(ValidationResult::reason).toList().joinToString("\n- "))
-                }else {
+                if (errors.isNotEmpty()) {
+                    context.reply(
+                        "There were some errors while attempting to start this application:\n- " + errors.stream().map(
+                            ValidationResult::reason
+                        ).toList().joinToString("\n- ")
+                    )
+                } else {
                     app.execute(context)
                 }
             }
@@ -101,7 +106,7 @@ object CommandManager : ListenerAdapter() {
 
         val toReturn: MutableList<String> = ArrayList()
 
-        while(m.find()){
+        while (m.find()) {
             toReturn.add(m.group())
         }
 
@@ -109,8 +114,8 @@ object CommandManager : ListenerAdapter() {
     }
 
 
-    val patternMatcher = Regex("<.*>")
-    private fun resolvePath(bot: JDA, input: String): Pair<String?, List<Pair<String, Any?>>>{
+    private val patternMatcher = Regex("<.*>")
+    private fun resolvePath(bot: JDA, input: String): Pair<String?, List<Pair<String, Any?>>> {
         val split = input.split("/")
         var thisCommand: BaseApplication? = null
         val pathArguments: MutableList<Pair<String, Any?>> = ArrayList()
@@ -118,31 +123,31 @@ object CommandManager : ListenerAdapter() {
         commandMap.forEach {
             val path = it.first
 
-            if(path.startsWith(split[0]) && path.endsWith(split[split.size-1])) {
+            if (path.startsWith(split[0]) && path.endsWith(split[split.size - 1])) {
                 thisCommand = it.second
 
-                for(i in 0 until split.size){
+                for (i in 0 until split.size) {
                     val pathSplit = path.split("/")[i]
-                    if(patternMatcher.matches(pathSplit)){
+                    if (patternMatcher.matches(pathSplit)) {
                         pathArguments.add(Pair(pathSplit, resolveObject(bot, pathSplit, split[i])))
                     }
                 }
             }
         }
 
-        return if(thisCommand != null) {
-            Pair(thisCommand!!.getPath().path + "/${split[split.size-1]}", pathArguments.toList())
-        }else{
+        return if (thisCommand != null) {
+            Pair(thisCommand!!.getPath().path + "/${split[split.size - 1]}", pathArguments.toList())
+        } else {
             Pair(input, pathArguments.toList())
         }
     }
 
-    private fun resolveObject(bot: JDA, pattern: String, extraInfo: String): Any?{
+    private fun resolveObject(bot: JDA, pattern: String, extraInfo: String): Any? {
         var toReturn: Any? = null
-        if(pattern in listOf("<userid>", "<user_id>")){
+        if (pattern in listOf("<userid>", "<user_id>")) {
             try {
                 toReturn = bot.getUserById(extraInfo)
-            }catch (ex: NumberFormatException){
+            } catch (ex: NumberFormatException) {
                 toReturn = bot.getUsersByName(extraInfo, true)
             }
         }
