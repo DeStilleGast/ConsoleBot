@@ -1,9 +1,9 @@
 package com.consolebot.commands
 
 import com.consolebot.Main
-import com.consolebot.Tuple
 import com.consolebot.commands.validations.ValidationResult
 import com.consolebot.database.DatabaseWrapper
+import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.*
@@ -18,19 +18,19 @@ import kotlin.streams.toList
 
 object CommandManager : ListenerAdapter() {
 
-    private val commandMap: MutableList<Tuple<String, BaseApplication>> = ArrayList()
+    private val commandMap: MutableList<Pair<String, BaseApplication>> = ArrayList()
 
     fun registerCommand(cmd: BaseApplication) {
-        val actualCommand = combinePathAndFile(cmd.getPath().path, cmd.filename)
-        commandMap.add(Tuple(actualCommand, cmd))
+        val actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
+        commandMap.add(Pair(actualCommand, cmd))
         Main.LOGGER.info("Command '$actualCommand' was registered")
     }
 
-    private fun combinePathAndFile(path: String, file: String): String {
-        if (path.endsWith("/"))
-            return path + file
+    private fun combinePathAndFile(path: KnownPaths, file: String): String {
+        if (path.path.endsWith("/"))
+            return path.path + file
 
-        return "$path/$file"
+        return "${path.path}/$file"
     }
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
@@ -63,20 +63,24 @@ object CommandManager : ListenerAdapter() {
 
             val hasSpaceInMessage =
                 commandLine.contains(" ")                                             // check if the commandline has a space
-            val filename = if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
+            var filename = if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
 //            val arguments: List<String> =
 //                if (hasSpaceInMessage)
 //                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
 //                else
 //                    Arrays.asList("")
 
-            if (commandMap.map { it.partA }.contains(filename)) { // check if application/command exist, if yes, run command
-                val app = commandMap.first { it.partA == filename }.partB
+            val pathArguments = resolvePath(event.jda, filename)
+            filename = pathArguments.first ?: filename
+
+            if (commandMap.map { it.first }.contains(filename)) { // check if application/command exist, if yes, run command
+                val app = commandMap.first { it.first == filename }.second
                 val context = Context(
                     event.channel,
                     event.author,
                     event.message,
-                    parseArguments(commandLine.substring(commandLine.indexOf(' ') + 1))
+                    parseArguments(commandLine.substring(commandLine.indexOf(' ') + 1)),
+                    pathArguments.second
                 )
 
                 val errors = app.runValidationCheck(context)
@@ -103,4 +107,47 @@ object CommandManager : ListenerAdapter() {
 
         return toReturn
     }
+
+
+    val patternMatcher = Regex("<.*>")
+    private fun resolvePath(bot: JDA, input: String): Pair<String?, List<Pair<String, Any?>>>{
+        val split = input.split("/")
+        var thisCommand: BaseApplication? = null
+        val pathArguments: MutableList<Pair<String, Any?>> = ArrayList()
+
+        commandMap.forEach {
+            val path = it.first
+
+            if(path.startsWith(split[0]) && path.endsWith(split[split.size-1])) {
+                thisCommand = it.second
+
+                for(i in 0 until split.size){
+                    val pathSplit = path.split("/")[i]
+                    if(patternMatcher.matches(pathSplit)){
+                        pathArguments.add(Pair(pathSplit, resolveObject(bot, pathSplit, split[i])))
+                    }
+                }
+            }
+        }
+
+        return if(thisCommand != null) {
+            Pair(thisCommand!!.getPath().path + "/${split[split.size-1]}", pathArguments.toList())
+        }else{
+            Pair(input, pathArguments.toList())
+        }
+    }
+
+    private fun resolveObject(bot: JDA, pattern: String, extraInfo: String): Any?{
+        var toReturn: Any? = null
+        if(pattern in listOf("<userid>", "<user_id>")){
+            try {
+                toReturn = bot.getUserById(extraInfo)
+            }catch (ex: NumberFormatException){
+                toReturn = bot.getUsersByName(extraInfo, true)
+            }
+        }
+
+        return toReturn
+    }
+
 }

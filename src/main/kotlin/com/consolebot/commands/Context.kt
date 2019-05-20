@@ -11,7 +11,13 @@ import java.util.concurrent.CompletionStage
 /**
  * Created by DeStilleGast 12-5-2019
  */
-class Context(val channel: MessageChannel, val user: User, val message: Message, val arguments: List<String>) {
+class Context(
+    val channel: MessageChannel,
+    val user: User,
+    val message: Message,
+    val arguments: List<String>,
+    val pathArguments: List<Pair<String, Any?>>
+) {
 
     fun isUser(): Boolean {
         return !user.isBot || !user.isFake
@@ -21,7 +27,7 @@ class Context(val channel: MessageChannel, val user: User, val message: Message,
         return message.contentRaw
     }
 
-    fun reply(msg: Any): CompletionStage<Message> {
+    fun reply(msg: Any?): CompletionStage<Message> {
         if (channel is TextChannel) {
             return if (channel.guild.selfMember.hasPermission(channel, Permission.MESSAGE_WRITE)) {
                 channel.sendMessage(msg.toString()).submit()
@@ -65,5 +71,18 @@ class Context(val channel: MessageChannel, val user: User, val message: Message,
 
     fun getDBUserAsync(callback: (u: DBUser) -> Any) {
         DatabaseUserWrapper.getUser(user).thenAccept { callback(it) }
+
+    }
+
+    fun getPathUser(index: Int = 0): User? {
+        val userContext = pathArguments.filter { it.first == "<userid>" }[index].second
+        if (userContext is ArrayList<*>) {
+            if (userContext.size == 1) {
+                return (userContext[0] as User)
+            }
+        } else if (userContext is User) {
+            return userContext
+        }
+        return null
     }
 }

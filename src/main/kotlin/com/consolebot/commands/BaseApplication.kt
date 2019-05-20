@@ -34,6 +34,12 @@ abstract class BaseApplication(var filename: String){
     }*/
 
     /**
+     * Return the help text the application
+     */
+    abstract fun helpText(): String
+
+
+    /**
      * @return list of permissions that the bot requires to run this command
      */
     open fun requireBotPermission(): List<Permission> {

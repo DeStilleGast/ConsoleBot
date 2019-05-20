@@ -21,4 +21,8 @@ class Ping : BaseApplication("ping") {
     override fun getPath(): KnownPaths {
         return KnownPaths.ROOT
     }
+
+    override fun helpText(): String {
+        return "Calculate the latency with discord and this bot"
+    }
 }

@@ -24,4 +24,8 @@ class Shutdown : BaseApplication("shutdown") {
     override fun getPath(): KnownPaths{
         return KnownPaths.SYSTEM
     }
+
+    override fun helpText(): String {
+        return "Ättempts to shutdown the bot"
+    }
 }

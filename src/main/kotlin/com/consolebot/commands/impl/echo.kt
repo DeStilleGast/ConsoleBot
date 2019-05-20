@@ -15,4 +15,8 @@ class echo: BaseApplication("echo") {
     override fun getPath(): KnownPaths {
         return KnownPaths.ROOT
     }
+
+    override fun helpText(): String {
+        return "returns the given text as a echo effect"
+    }
 }

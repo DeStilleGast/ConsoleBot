@@ -15,4 +15,8 @@ class Invite : BaseApplication("invite") {
     override fun getPath(): KnownPaths {
         return KnownPaths.SYSTEM
     }
+
+    override fun helpText(): String {
+        return "Get the invite link for this bot so you can add it to your server"
+    }
 }

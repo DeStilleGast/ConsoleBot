@@ -18,4 +18,8 @@ class Info : BaseApplication("info") {
     override fun getPath(): KnownPaths {
         return KnownPaths.SYSTEM
     }
+
+    override fun helpText(): String {
+        return "Get information about the bot"
+    }
 }
