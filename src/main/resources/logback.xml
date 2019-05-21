@@ -3,11 +3,9 @@
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
 
-<!--     https://logback.qos.ch/manual/filters.html#levelFilter -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+<!--        https://logback.qos.ch/manual/filters.html#thresholdFilter -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
 
         <encoder>
