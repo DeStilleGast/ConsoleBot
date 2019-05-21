@@ -22,6 +22,15 @@ object CommandManager : ListenerAdapter() {
 
     fun registerCommand(cmd: BaseApplication) {
         val actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
+
+        if(cmd.filename.contains(" ")){
+            Main.LOGGER.error("Command '${cmd.filename}' has a space in its filename and is not registered !")
+        }
+
+        if(commandMap.map { it.first }.contains(actualCommand)){
+            Main.LOGGER.error("Command '$actualCommand' is already registered, change filename or path !")
+        }
+
         commandMap.add(Pair(actualCommand, cmd))
         Main.LOGGER.info("Command '$actualCommand' was registered")
     }
