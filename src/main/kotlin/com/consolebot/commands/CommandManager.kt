@@ -42,6 +42,7 @@ object CommandManager : ListenerAdapter() {
             allowedPrefixes.forEach { tryAndRunCommand(it, event) }
         }
 
+        // TODO: Uitleggen hoe dit nou precies in elkaar zit en hoe dit de overige db requests tegenhoud
         if (event.guild != null) {
             DatabaseWrapper.getGuildSafe(event.guild).thenAccept { stored
                 ->
@@ -63,15 +64,16 @@ object CommandManager : ListenerAdapter() {
 
             val hasSpaceInMessage =
                 commandLine.contains(" ")                                             // check if the commandline has a space
-            var filename =
-                if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
+//            var filename =
+//                if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
 //            val arguments: List<String> =
 //                if (hasSpaceInMessage)
 //                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
 //                else
 //                    Arrays.asList("")
 
-            val pathArguments = resolvePath(event.jda, filename)
+            var filename = ""
+            val pathArguments = resolvePath(event.jda, commandLine)
             filename = pathArguments.first ?: filename
 
             if (commandMap.map { it.first }.contains(filename)) { // check if application/command exist, if yes, run command
@@ -114,7 +116,7 @@ object CommandManager : ListenerAdapter() {
     }
 
 
-    private val patternMatcher = Regex("<.*>")
+    val patternMatcher = Regex("<.*>")
     private fun resolvePath(bot: JDA, input: String): Pair<String?, List<Pair<String, Any?>>> {
         val split = input.split("/")
         var thisCommand: BaseApplication? = null
@@ -122,8 +124,9 @@ object CommandManager : ListenerAdapter() {
 
         commandMap.forEach {
             val path = it.first
+            val pathRegex = it.second.getRegexPath()
 
-            if (path.startsWith(split[0]) && path.endsWith(split[split.size - 1])) {
+            if (input.matches(pathRegex)) {
                 thisCommand = it.second
 
                 for (i in 0 until split.size) {
@@ -138,7 +141,7 @@ object CommandManager : ListenerAdapter() {
         return if (thisCommand != null) {
             Pair(thisCommand!!.getPath().path + "/${split[split.size - 1]}", pathArguments.toList())
         } else {
-            Pair(input, pathArguments.toList())
+            Pair(input.split(" ")[0], pathArguments.toList())
         }
     }
 
@@ -147,8 +150,14 @@ object CommandManager : ListenerAdapter() {
         if (pattern in listOf("<userid>", "<user_id>")) {
             try {
                 toReturn = bot.getUserById(extraInfo)
-            } catch (ex: NumberFormatException) {
-                toReturn = bot.getUsersByName(extraInfo, true)
+            } catch (ignored: NumberFormatException) {
+                toReturn = bot.getUsersByName(extraInfo.replace(" ", ""), true)
+            }
+        } else if (pattern in listOf("<guildid>", "<guild_id>")) {
+            try {
+                toReturn = bot.asBot().shardManager.getGuildById(extraInfo)
+            } catch (ignored: NumberFormatException) {
+                toReturn = bot.asBot().shardManager.getGuildsByName(extraInfo, true)
             }
         }
 

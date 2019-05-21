@@ -31,6 +31,17 @@ abstract class BaseApplication(var filename: String) {
      */
     abstract fun getPath(): KnownPaths
 
+
+    // ignore non-final function call, it should always be filled
+    private val pathRegex = Regex(getPath().path.replace(CommandManager.patternMatcher, ".*"))
+
+    /**
+     * Return regex to determ if given input matches our file
+     */
+    fun getRegexPath(): Regex {
+        return pathRegex
+    }
+
     /**
      * Return the help text the application
      */

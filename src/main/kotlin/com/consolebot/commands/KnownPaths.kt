@@ -7,6 +7,7 @@ enum class KnownPaths(val path: String) {
     ROOT(""),
     SYSTEM("/core"),
     GUILD("/guild"),
+    GUILDOTHER("/guild/<guildid>"),
     FUN("/fun"),
     AUDIO("/music"),
     USER("/user/<userid>");

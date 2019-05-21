@@ -85,4 +85,16 @@ class Context(
         }
         return null
     }
+
+    fun getPathGuild(index: Int = 0): Guild? {
+        val guildContext = pathArguments.filter { it.first == "<guildid>" }[index].second
+        if (guildContext is List<*>) {
+            if (guildContext.size == 1) {
+                return (guildContext[0] as Guild)
+            }
+        } else if (guildContext is Guild) {
+            return guildContext
+        }
+        return null
+    }
 }
