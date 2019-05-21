@@ -10,13 +10,8 @@ import com.consolebot.commands.KnownPaths
 
 class InServerCount : BaseApplication("servers"){
     override fun execute(context: Context) {
-        val user = context.getPathUser(0)
-        if(user == null){
-            context.reply("No or multiple users found in path")
-        }else{
-            val guildCount = context.getBot().asBot().shardManager.getUserById(user.id).mutualGuilds.size
-            context.reply("I can see this user in $guildCount server${if (guildCount != 1) "s" else ""}")
-        }
+        val guildCount = context.getBot().asBot().shardManager.getUserById(context.user.id).mutualGuilds.size
+        context.reply("I can see you in $guildCount server${if (guildCount != 1) "s" else ""}")
     }
 
     override fun getPath(): KnownPaths {
@@ -25,6 +20,6 @@ class InServerCount : BaseApplication("servers"){
 
 
     override fun helpText(): String {
-        return "get the server count of this user that the bot can see"
+        return "get the server count of you that the bot can see"
     }
 }

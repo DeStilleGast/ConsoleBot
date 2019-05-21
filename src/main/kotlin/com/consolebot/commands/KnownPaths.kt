@@ -10,7 +10,8 @@ enum class KnownPaths(val path: String) {
     GUILDOTHER("/guild/<guildid>"),
     FUN("/fun"),
     AUDIO("/music"),
-    USER("/user/<userid>");
+    USER("/user"),
+    USEROTHER("/user/<userid>");
 
 //    var path: String
 

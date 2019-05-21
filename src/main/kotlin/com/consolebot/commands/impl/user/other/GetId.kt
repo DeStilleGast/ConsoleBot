@@ -1,23 +1,23 @@
-package com.consolebot.commands.impl.user
+package com.consolebot.commands.impl.user.other
 
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
 import com.consolebot.commands.KnownPaths
 
 /**
- * Created by DeStilleGast 21-5-2019
+ * Created by DeStilleGast 20-5-2019
  */
 class GetId : BaseApplication("id") {
     override fun execute(context: Context) {
-        context.reply(context.user.id)
+        context.reply(context.getPathUser()?.id ?: "No or multiple users found in path")
     }
 
     override fun getPath(): KnownPaths {
-        return KnownPaths.USER
+        return KnownPaths.USEROTHER
     }
 
 
     override fun helpText(): String {
-        return "get the id from your account"
+        return "get the id of this user"
     }
 }
