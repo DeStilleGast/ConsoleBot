@@ -97,8 +97,8 @@ class Main(botSettings: Settings) : EventListener {
 
     override fun onEvent(event: Event?) {
         if (event is ReadyEvent) {
-            println("Bot [${event.jda.shardInfo.shardId}] is ready !")
-            println("Bot [${event.jda.shardInfo.shardId}] is in ${event.guildTotalCount} guilds with ${event.guildAvailableCount} available")
+            LOGGER.info("Bot [${event.jda.shardInfo.shardId}] is ready !")
+            LOGGER.info("Bot [${event.jda.shardInfo.shardId}] is in ${event.guildTotalCount} guilds with ${event.guildAvailableCount} available")
 
             event.jda.presence.setPresence(Game.playing("MOM, GRAB THE CAMERA!"), false)
         } else if (event is GuildJoinEvent) {

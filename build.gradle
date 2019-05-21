@@ -16,7 +16,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8" //Kotlin
 
     // https://github.com/DV8FromTheWorld/JDA
-    compile 'net.dv8tion:JDA:3.8.3_463' // JDA
+    compile ('net.dv8tion:JDA:3.8.3_463') { // JDA
+        exclude module: 'opus-java'
+    }
 
     // https://github.com/aschoerk/reflections8
     compile 'net.oneandone.reflections8:reflections8:0.11.4' // Reflection8 (command registration)
@@ -26,16 +28,16 @@ dependencies {
 
     compile 'mysql:mysql-connector-java:8.0.16' // connect to the database
 
-    compile "org.jetbrains.exposed:exposed:0.9.1" // add exposed
+    // https://github.com/JetBrains/Exposed
+    compile "org.jetbrains.exposed:exposed:0.9.1" // add exposed (EF database)
 
-    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.2.1' // kotlinx
+    // https://github.com/Kotlin/kotlinx.coroutines
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.2.1' // kotlinx (async stuff)
 
+    // https://github.com/MicroUtils/kotlin-logging/
     compile 'io.github.microutils:kotlin-logging:1.6.24' // logging
-
-    compile 'org.slf4j:slf4j-simple:1.7.5' // SLF4J Implemtation (simple)
-
-
-
+    
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3' // Logger with colors
 }
 
 compileKotlin {
