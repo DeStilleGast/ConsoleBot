@@ -11,7 +11,8 @@ enum class KnownPaths(val path: String) {
     FUN("/fun"),
     AUDIO("/music"),
     USER("/user"),
-    USEROTHER("/user/<userid>");
+    USEROTHER("/user/<userid>"),
+    TOOL("/tools");
 
 //    var path: String
 

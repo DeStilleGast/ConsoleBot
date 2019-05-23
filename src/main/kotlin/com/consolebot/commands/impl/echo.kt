@@ -7,7 +7,7 @@ import com.consolebot.commands.KnownPaths
 /**
  * Created by DeStilleGast 13-5-2019
  */
-class echo: BaseApplication("echo") {
+class echo : BaseApplication("echo") {
     override fun execute(context: Context) {
         context.reply(context.arguments.joinToString(" "))
     }

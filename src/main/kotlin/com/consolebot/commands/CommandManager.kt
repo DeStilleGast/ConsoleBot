@@ -23,11 +23,11 @@ object CommandManager : ListenerAdapter() {
     fun registerCommand(cmd: BaseApplication) {
         val actualCommand = combinePathAndFile(cmd.getPath(), cmd.filename)
 
-        if(cmd.filename.contains(" ")){
+        if (cmd.filename.contains(" ")) {
             Main.LOGGER.error("Command '${cmd.filename}' has a space in its filename and is not registered !")
         }
 
-        if(commandMap.map { it.first }.contains(actualCommand)){
+        if (commandMap.map { it.first }.contains(actualCommand)) {
             Main.LOGGER.error("Command '$actualCommand' is already registered, change filename or path !")
         }
 
@@ -112,7 +112,7 @@ object CommandManager : ListenerAdapter() {
 
     // https://stackoverflow.com/questions/10695143/split-a-quoted-string-with-a-delimiter
     private fun parseArguments(command: String): List<String> {
-        val p = Pattern.compile("((?<=(\"))[\\w ]*(?=(\"(\\s|$))))|((?<!\")\\w+(?!\"))")
+        val p = Pattern.compile("([^\"]\\S*|\".+?\")\\s*")
         val m = p.matcher(command)
 
         val toReturn: MutableList<String> = ArrayList()
