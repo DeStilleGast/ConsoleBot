@@ -100,7 +100,9 @@ class Main(botSettings: Settings) : EventListener {
             LOGGER.info("Bot [${event.jda.shardInfo.shardId}] is ready !")
             LOGGER.info("Bot [${event.jda.shardInfo.shardId}] is in ${event.guildTotalCount} guilds with ${event.guildAvailableCount} available")
 
-            event.jda.presence.setPresence(Game.playing("MOM, GRAB THE CAMERA!"), false)
+            if(event.jda.selfUser.idLong == 359056863767166977) {
+                event.jda.presence.setPresence(Game.playing("as ConsoleBot with debugging!"), false)
+            }
         } else if (event is GuildJoinEvent) {
             DatabaseWrapper.newGuild(event.guild)
             LOGGER.info("Joined ${event.guild.name}") // quick logging
