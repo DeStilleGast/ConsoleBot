@@ -9,7 +9,7 @@ import com.consolebot.commands.KnownPaths
  */
 class echo : BaseApplication("echo") {
     override fun execute(context: Context) {
-        context.reply(context.arguments.joinToString(" "))
+        context.reply(context.getText())
     }
 
     override fun getPath(): KnownPaths {

@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.*
 import java.util.concurrent.CompletionStage
+import java.util.regex.Pattern
 
 /**
  * Created by DeStilleGast 12-5-2019
@@ -15,16 +16,18 @@ class Context(
     val channel: MessageChannel,
     val user: User,
     val message: Message,
-    val arguments: List<String>,
-    val pathArguments: List<Pair<String, Any?>>
+    val pathArguments: List<Pair<String, Any?>>,
+    private val appArguments: String
 ) {
+
+    val arguments: List<String> = parseArguments(appArguments)
 
     fun isUser(): Boolean {
         return !user.isBot || !user.isFake
     }
 
     fun getText(): String {
-        return message.contentRaw
+        return appArguments
     }
 
     fun reply(msg: Any?): CompletionStage<Message> {
@@ -96,5 +99,19 @@ class Context(
             return guildContext
         }
         return null
+    }
+
+    // https://stackoverflow.com/questions/10695143/split-a-quoted-string-with-a-delimiter
+    private fun parseArguments(command: String): List<String> {
+        val p = Pattern.compile("([^\"]\\S*|\".+?\")\\s*")
+        val m = p.matcher(command)
+
+        val toReturn: MutableList<String> = ArrayList()
+
+        while (m.find()) {
+            toReturn.add(m.group())
+        }
+
+        return toReturn
     }
 }

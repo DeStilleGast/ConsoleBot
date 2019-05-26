@@ -7,7 +7,6 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.streams.toList
 
@@ -71,16 +70,6 @@ object CommandManager : ListenerAdapter() {
             if (!commandLine.startsWith('/')) commandLine =
                 "/$commandLine"                                 // Every command should start with /, this will fix it for people that don't know that
 
-            val hasSpaceInMessage =
-                commandLine.contains(" ")                                             // check if the commandline has a space
-//            var filename =
-//                if (hasSpaceInMessage) commandLine.split(" ")[0] else commandLine          // retrive acual command (file)
-//            val arguments: List<String> =
-//                if (hasSpaceInMessage)
-//                    commandLine.substring(commandLine.indexOf(' ') + 1).split(" ")      // Get list of arguments
-//                else
-//                    Arrays.asList("")
-
             var filename = ""
             val pathArguments = resolvePath(event.jda, commandLine)
             filename = pathArguments.first ?: filename
@@ -91,8 +80,8 @@ object CommandManager : ListenerAdapter() {
                     event.channel,
                     event.author,
                     event.message,
-                    parseArguments(commandLine.substring(commandLine.indexOf(' ') + 1)),
-                    pathArguments.second
+                    pathArguments.second,
+                    pathArguments.third ?: ""
                 )
 
                 val errors = app.runValidationCheck(context)
@@ -110,47 +99,44 @@ object CommandManager : ListenerAdapter() {
         }
     }
 
-    // https://stackoverflow.com/questions/10695143/split-a-quoted-string-with-a-delimiter
-    private fun parseArguments(command: String): List<String> {
-        val p = Pattern.compile("([^\"]\\S*|\".+?\")\\s*")
-        val m = p.matcher(command)
-
-        val toReturn: MutableList<String> = ArrayList()
-
-        while (m.find()) {
-            toReturn.add(m.group())
-        }
-
-        return toReturn
-    }
-
 
     val patternMatcher = Regex("<.*>")
-    private fun resolvePath(bot: JDA, input: String): Pair<String?, List<Pair<String, Any?>>> {
-        val split = input.split("/")
+    // Pair < actual command path, resolved users/guilds in path, rest of input>
+    private fun resolvePath(bot: JDA, input: String): Triple<String?, List<Pair<String, Any?>>, String?> {
         var thisCommand: BaseApplication? = null
+        var thisPath: String? = null
         val pathArguments: MutableList<Pair<String, Any?>> = ArrayList()
 
-        commandMap.forEach {
-            val path = it.first
+        var appArguments: String? = null
+
+        for (it in commandMap) {
+            thisPath = it.first
             val pathRegex = it.second.getRegexPath()
 
             if (input.matches(pathRegex)) {
                 thisCommand = it.second
+                appArguments = thisCommand.getRegexAppPath().replaceFirst(input, "").trim()
+
+                // Splitting the path to resolve items
+                val split = input.split("/")
 
                 for (i in 0 until split.size) {
-                    val pathSplit = path.split("/")[i]
+                    val pathSplit = thisPath.split("/")[i]
                     if (patternMatcher.matches(pathSplit)) {
                         pathArguments.add(Pair(pathSplit, resolveObject(bot, pathSplit, split[i])))
                     }
                 }
+                break
             }
         }
 
-        return if (thisCommand != null) {
-            Pair(thisCommand!!.getPath().path + "/${split[split.size - 1]}", pathArguments.toList())
+
+        // both are filled if thiscommand is not null
+        return if (thisCommand != null && appArguments != null) {
+            Triple(thisPath, pathArguments.toList(), appArguments)
         } else {
-            Pair(input.split(" ")[0], pathArguments.toList())
+            // todo
+            Triple(input.split(" ")[0], pathArguments.toList(), "")
         }
     }
 
