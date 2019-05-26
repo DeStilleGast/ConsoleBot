@@ -100,7 +100,7 @@ object CommandManager : ListenerAdapter() {
                 if (errors.isNotEmpty()) {
                     context.reply(
                         "There were some errors while attempting to start this application:\n- " + errors.stream().map(
-                            ValidationResult::reason
+                            ValidationResult::notPassedReason
                         ).toList().joinToString("\n- ")
                     )
                 } else {
