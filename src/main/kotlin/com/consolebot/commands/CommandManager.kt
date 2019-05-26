@@ -118,12 +118,12 @@ object CommandManager : ListenerAdapter() {
                 appArguments = thisCommand.getRegexAppPath().replaceFirst(input, "").trim()
 
                 // Splitting the path to resolve items
-                val split = input.split("/")
+                val split = thisPath.split("/")
 
                 for (i in 0 until split.size) {
                     val pathSplit = thisPath.split("/")[i]
                     if (patternMatcher.matches(pathSplit)) {
-                        pathArguments.add(Pair(pathSplit, resolveObject(bot, pathSplit, split[i])))
+                        pathArguments.add(Pair(pathSplit, resolveObject(bot, pathSplit, input.split("/")[i])))
                     }
                 }
                 break
@@ -135,8 +135,8 @@ object CommandManager : ListenerAdapter() {
         return if (thisCommand != null && appArguments != null) {
             Triple(thisPath, pathArguments.toList(), appArguments)
         } else {
-            // todo
-            Triple(input.split(" ")[0], pathArguments.toList(), "")
+            val thinkcmd = input.split(" ")[0]
+            Triple(thinkcmd, pathArguments.toList(), input.substring(thinkcmd.length))
         }
     }
 
