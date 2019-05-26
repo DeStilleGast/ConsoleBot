@@ -3,6 +3,7 @@ package com.consolebot.commands.impl.tools
 import com.consolebot.commands.BaseApplication
 import com.consolebot.commands.Context
 import com.consolebot.commands.KnownPaths
+import net.dv8tion.jda.core.EmbedBuilder
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -14,10 +15,9 @@ import javax.imageio.ImageIO
  */
 class ColorApp : BaseApplication("color") {
     override fun execute(context: Context) {
-        val tmp = BufferedImage(50, 25, BufferedImage.TYPE_4BYTE_ABGR)
 
         var color: Color? = null
-        var colorArg = context.arguments[0]
+        var colorArg = context.getText()
 
         if (colorArg.startsWith("0x")) colorArg = colorArg.replace("0x", "#")
 
@@ -31,9 +31,21 @@ class ColorApp : BaseApplication("color") {
 
         if (color == null) {
             try {
-                color = Color.decode(context.arguments[0])
+                color = hackColorByName(colorArg)
             } catch (ex: Exception) {
-                color = hackColorByName(context.arguments[0])
+                color = Color.decode(colorArg)
+            }
+        }
+
+        if(color == null && colorArg.count { it == ' ' } == 2){
+            val split = colorArg.split(" ")
+
+            try{
+                color = Color(split[0].toFloat(), split[1].toFloat(), split[2].toFloat())
+            }catch (ex: Exception){
+                try{
+                    color = Color(split[0].toInt(), split[1].toInt(), split[2].toInt())
+                }catch (ex: Exception){}
             }
         }
 
@@ -42,14 +54,25 @@ class ColorApp : BaseApplication("color") {
             return
         }
 
+
+        val tmp = BufferedImage(200, 200, BufferedImage.TYPE_4BYTE_ABGR)
         for (x in 0 until tmp.width) {
             for (y in 0 until tmp.height) {
                 tmp.setRGB(x, y, color.rgb)
-
             }
         }
 
-        context.channel.sendFile(toByteArrayAutoClosable(tmp, "png"), "Color.png").queue()
+        val embed = EmbedBuilder()
+        embed.addField("RGB Color:", "[R: ${color.red}, G: ${color.green}, B: ${color.blue}]", false)
+        embed.addField("ARGB Color:", "[A: ${color.alpha}, R: ${color.red}, G: ${color.green}, B: ${color.blue}]", false)
+        embed.addField("HEX Color: (without alpha)", "#%02X%02X%02X".format(color.red, color.green, color.blue), false)
+        embed.addField("HEX Color: (with alpha)", "#%02X%02X%02X%02X".format(color.alpha, color.red, color.green, color.blue), false)
+        embed.setThumbnail("attachment://Color.png")
+        embed.setColor(color)
+
+
+        context.channel.sendMessage(embed.build()).addFile(toByteArrayAutoClosable(tmp, "png"), "Color.png").queue()
+//        context.channel.sendFile(toByteArrayAutoClosable(tmp, "png"), "Color.png").queue()
 
     }
 
@@ -58,7 +81,7 @@ class ColorApp : BaseApplication("color") {
     }
 
     override fun helpText(): String {
-        return "Shows visual colors from given input"
+        return "Shows visual colors from given input, supports name of the color, hex, rgb (also with space)" // needs better help page
     }
 
     private fun toByteArrayAutoClosable(image: BufferedImage, type: String): ByteArray {
@@ -70,7 +93,7 @@ class ColorApp : BaseApplication("color") {
 
     private fun hackColorByName(colorName: String): Color? {
         return try {
-            Color::class.java.getField(colorName.toUpperCase()).get(null) as Color
+            Color::class.java.getField(colorName.replace(" ", "_").toUpperCase()).get(null) as Color
         } catch (e: IllegalArgumentException) {
             null
         } catch (e: IllegalAccessException) {
