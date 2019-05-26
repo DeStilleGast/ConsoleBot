@@ -52,7 +52,6 @@ class Context(
         return channel.sendMessage(msg.toString()).submit()
     }
 
-
     fun getBot(): JDA {
         return channel.jda
     }

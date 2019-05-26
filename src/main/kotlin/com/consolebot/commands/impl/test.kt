@@ -45,6 +45,20 @@ class test : BaseApplication("test") {
 //        context.reply("Application started")
 //
 //        context.getDBUserAsync{ context.reply(it.terminalStyle) }
+
+//        context.reply("test 1").thenAccept {
+//            it.editMessage("test 2").submit().thenAccept {
+//                it.editMessage("test 3").submit().thenAccept {
+//                    it.editMessage("test 4").submit().thenAccept {
+//                        it.editMessage("test 5").submit().thenAccept {
+//                            it.editMessage("test 6").submit().thenAccept {
+//                                it.editMessage("test 7").submit()
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun getPath(): KnownPaths {

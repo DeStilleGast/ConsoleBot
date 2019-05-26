@@ -16,36 +16,19 @@ import javax.imageio.ImageIO
 class ColorApp : BaseApplication("color") {
     override fun execute(context: Context) {
 
-        var color: Color? = null
-        var colorArg = context.getText()
+        val colorArg = context.getText()
+        var color: Color? = getColorFromFXColor(colorArg)
 
-        if (colorArg.startsWith("0x")) colorArg = colorArg.replace("0x", "#")
-
-        if (colorArg.startsWith("#")) {
-            if (colorArg.length == "#123456".length) {
-                color = hex2Rgb(colorArg)
-            } else if (colorArg.length == "#12345678".length) {
-                color = hex2Rgba(colorArg)
-            }
-        }
-
-        if (color == null) {
-            try {
-                color = hackColorByName(colorArg)
-            } catch (ex: Exception) {
-                color = Color.decode(colorArg)
-            }
-        }
-
-        if(color == null && colorArg.count { it == ' ' } == 2){
+        if (color == null && colorArg.count { it == ' ' } == 2) {
             val split = colorArg.split(" ")
 
-            try{
+            try {
                 color = Color(split[0].toFloat(), split[1].toFloat(), split[2].toFloat())
-            }catch (ex: Exception){
-                try{
+            } catch (ex: Exception) {
+                try {
                     color = Color(split[0].toInt(), split[1].toInt(), split[2].toInt())
-                }catch (ex: Exception){}
+                } catch (ex: Exception) {
+                }
             }
         }
 
@@ -71,8 +54,8 @@ class ColorApp : BaseApplication("color") {
         embed.setColor(color)
 
 
-        context.channel.sendMessage(embed.build()).addFile(toByteArrayAutoClosable(tmp, "png"), "Color.png").queue()
-//        context.channel.sendFile(toByteArrayAutoClosable(tmp, "png"), "Color.png").queue()
+        context.channel.sendMessage(embed.build())
+            .addFile(toByteArrayAutoClosable(tmp, "png"), "Color.png").queue()
 
     }
 
@@ -81,7 +64,21 @@ class ColorApp : BaseApplication("color") {
     }
 
     override fun helpText(): String {
-        return "Shows visual colors from given input, supports name of the color, hex, rgb (also with space)" // needs better help page
+        return listOf(
+            "Shows a visual representation of a color and gives a RGB and hex color",
+            "it currenly supports:",
+            "- HEX (alpha colors at the end !)",
+            "- RGB",
+            "- names from color (english only)",
+            "",
+            "Examples:",
+            "- red",
+            "- #aabbcc",
+            "- 0x136362",
+            "- 0.4 0.7 0.1"
+        ).joinToString("\n")
+
+//        return "Shows visual colors from given input, supports name of the color, hex, rgb (also with space)" // needs better help page
     }
 
     private fun toByteArrayAutoClosable(image: BufferedImage, type: String): ByteArray {
@@ -91,44 +88,19 @@ class ColorApp : BaseApplication("color") {
         }
     }
 
-    private fun hackColorByName(colorName: String): Color? {
-        return try {
-            Color::class.java.getField(colorName.replace(" ", "_").toUpperCase()).get(null) as Color
-        } catch (e: IllegalArgumentException) {
-            null
-        } catch (e: IllegalAccessException) {
-            null
-        } catch (e: NoSuchFieldException) {
-            null
-        } catch (e: SecurityException) {
-            null
+    private fun getColorFromFXColor(input: String): Color? {
+        try {
+            val sceneColor = javafx.scene.paint.Color.valueOf(input.replace(" ", ""))
+            return Color(
+                sceneColor.red.toFloat(),
+                sceneColor.green.toFloat(),
+                sceneColor.blue.toFloat(),
+                sceneColor.opacity.toFloat()
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-    }
 
-    /**
-     *
-     * @param colorStr e.g. "#FFFFFF"
-     * @return
-     */
-    private fun hex2Rgb(colorStr: String): Color {
-        return Color(
-            Integer.valueOf(colorStr.substring(1, 3), 16),
-            Integer.valueOf(colorStr.substring(3, 5), 16),
-            Integer.valueOf(colorStr.substring(5, 7), 16)
-        )
-    }
-
-    /**
-     *
-     * @param colorStr e.g. "#FFFFFFFF"
-     * @return
-     */
-    private fun hex2Rgba(colorStr: String): Color {
-        return Color(
-            Integer.valueOf(colorStr.substring(3, 5), 16),
-            Integer.valueOf(colorStr.substring(5, 7), 16),
-            Integer.valueOf(colorStr.substring(7, 9), 16),
-            Integer.valueOf(colorStr.substring(1, 3), 16)
-        )
+        return null
     }
 }
