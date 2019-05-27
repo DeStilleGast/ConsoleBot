@@ -36,7 +36,13 @@ class kick : BaseApplication("kick") {
             return
         }
 
+        // it still can return null !
         val member = guild.getMember(user)
+
+        if(member == null){
+            context.reply("This user is not in this guild")
+            return
+        }
 
         if(PermissionUtil.canInteract(guild.selfMember, member)){
             context.reply("Missing permission: Cannot kick this user!\n - This user has the same or a higher role than this bot")
