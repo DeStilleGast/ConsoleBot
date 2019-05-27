@@ -59,6 +59,8 @@ class test : BaseApplication("test") {
 //                }
 //            }
 //        }
+
+        throw NullPointerException("Exception test")
     }
 
     override fun getPath(): KnownPaths {

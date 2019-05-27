@@ -93,7 +93,12 @@ object CommandManager : ListenerAdapter() {
                         ).toList().joinToString("\n- ")
                     )
                 } else {
-                    app.execute(context)
+                    try {
+                        app.execute(context)
+                    }catch (ex: Exception){
+                        context.reply("There were some errors while attempting to running this application, if you believe it is a error on the bot side, please attempt to use the bug report application, Exception:\n - ${ex.message}")
+                        context.logException("Unhandled exception !!!", ex)
+                    }
                 }
             }
         }
