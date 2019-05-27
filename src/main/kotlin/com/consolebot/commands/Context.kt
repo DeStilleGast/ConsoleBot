@@ -125,7 +125,7 @@ class Context(
                 "\t - Path arguments: ${pathArguments.joinToString { " -> " }}\n" +
                 "\t - App arguments: $appArguments\n" +
                 "\t - Exception message: ${thr.message}\n" +
-                "\t - Exception: (printing)")
-        thr.printStackTrace()
+                "\t - Exception: (printing)", thr)
+//        thr.printStackTrace()
     }
 }

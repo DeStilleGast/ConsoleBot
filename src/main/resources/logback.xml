@@ -20,16 +20,18 @@
                 <maxFileSize>100MB</maxFileSize>
             </rollingPolicy>
 
-            <append>false</append>
-            <immediateFlush>false</immediateFlush>
+
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
 
             <encoder>
                 <pattern>%d [%thread] %level %mdc %logger{35} - %msg%n</pattern>
             </encoder>
         </appender>
 
-    <root level="TRACE">
-        <appender-ref ref="FILE"/>
+    <root>
+        <appender-ref ref="FILE" />
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
