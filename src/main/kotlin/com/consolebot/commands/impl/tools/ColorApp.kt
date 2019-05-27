@@ -73,8 +73,10 @@ class ColorApp : BaseApplication("color") {
             "",
             "Examples:",
             "- red",
+            "- dark blue",
             "- #aabbcc",
             "- 0x136362",
+            "- 50 100 150",
             "- 0.4 0.7 0.1"
         ).joinToString("\n")
 
