@@ -113,4 +113,19 @@ class Context(
 
         return toReturn
     }
+
+    /**
+     * If something goes wrong, try to log as many variables/values as possible
+     */
+    fun logException(msg: String, thr: Throwable){
+        Main.LOGGER.error("Message: $msg \n" +
+                "\t - Guild: ${getGuild()?.name ?: "Group"}\n" +
+                "\t - Author: ${user.name}\n" +
+                "\t - Command: ${message.contentRaw}\n" +
+                "\t - Path arguments: ${pathArguments.joinToString { " -> " }}\n" +
+                "\t - App arguments: $appArguments\n" +
+                "\t - Exception message: ${thr.message}\n" +
+                "\t - Exception: (printing)")
+        thr.printStackTrace()
+    }
 }
